@@ -1,4 +1,4 @@
-# Fourchettator.fr - Next.js + Turso (libSQL)
+# Fourchettator - Next.js + Turso (libSQL)
 
 Site de recettes : frontend + backend (App Router + route handlers).
 Base de données = **SQLite** : un fichier en local, Turso (libSQL) en prod sur Vercel.
