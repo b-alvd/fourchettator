@@ -19,6 +19,16 @@ export default function AccountPanel({ user, favorites }) {
   const [delMsg, setDelMsg] = useState("");
   const [delBusy, setDelBusy] = useState(false);
 
+  const [optIn, setOptIn] = useState(user.marketingOptIn !== false);
+
+  async function toggleOptIn(on) {
+    setOptIn(on);
+    const res = await fetch("/api/account/marketing", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ on }),
+    });
+    if (!res.ok) setOptIn(!on);
+  }
+
   async function removeFav(id) {
     setFavs((f) => f.filter((r) => r.id !== id));
     fetch("/api/favorites", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ recipeId: id, on: false }) }).catch(() => {});
@@ -96,6 +106,15 @@ export default function AccountPanel({ user, favorites }) {
           <p>Pas encore de favori. <Link href="/recettes">Va t&apos;en trouver un&nbsp;!</Link></p>
         </div>
       )}
+
+      <div className="sec-head" style={{ marginTop: 44 }}><h2>Préférences email</h2></div>
+      <label className="pref-row">
+        <input type="checkbox" checked={optIn} onChange={(e) => toggleOptIn(e.target.checked)} />
+        <span>
+          <b>Recevoir les emails promotionnels</b>
+          <small>Nouveautés, recettes mises en avant… Les emails de compte (vérification, sécurité) sont toujours envoyés.</small>
+        </span>
+      </label>
 
       <div className="sec-head" style={{ marginTop: 44 }}><h2>Mot de passe</h2></div>
       <div className="pw-form">
