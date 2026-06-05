@@ -60,7 +60,6 @@ export default function Browse({ initialCat = "Tous" }) {
       ) : (
         !loading && (
           <div className="empty">
-            <div className="big">🥲</div>
             <strong>Aucune recette trouvée</strong>
             <p>Essaie un autre mot-clé ou une autre catégorie.</p>
           </div>

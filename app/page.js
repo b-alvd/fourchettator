@@ -30,7 +30,6 @@ export default async function HomePage() {
         <RecipeGrid recipes={popular} />
       ) : (
         <div className="empty">
-          <div className="big">🍽️</div>
           <strong>Pas encore de recettes</strong>
         </div>
       )}

@@ -102,7 +102,6 @@ export default function AccountPanel({ user, favorites }) {
         </div>
       ) : (
         <div className="fav-empty">
-          <div style={{ fontSize: 44, marginBottom: 10 }}>🍽️</div>
           <p>Pas encore de favori. <Link href="/recettes">Va t&apos;en trouver un&nbsp;!</Link></p>
         </div>
       )}
