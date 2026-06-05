@@ -1,0 +1,11 @@
+node_modules
+.next
+.DS_Store
+*.db
+
+# Variables d'env : .env.development est committé (aucun secret),
+# tout le reste (secrets) est ignoré.
+.env
+.env.development
+.env.production
+.env*.local
