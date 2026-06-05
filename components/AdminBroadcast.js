@@ -34,7 +34,7 @@ export default function AdminBroadcast() {
           Envoyé à <b>{count ?? "…"}</b> abonné(s). Un lien de désabonnement est ajouté automatiquement à chaque email.
         </p>
         <label className="admin-field"><span>Objet</span>
-          <input className="auth-input" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Nouveautés de la semaine 🍲" />
+          <input className="auth-input" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Nouveautés de la semaine" />
         </label>
         <label className="admin-field" style={{ marginTop: 14 }}><span>Message</span>
           <textarea className="auth-input" rows={6} style={{ resize: "vertical", fontFamily: "inherit" }} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Écris ton message… (les sauts de ligne sont conservés)" />
