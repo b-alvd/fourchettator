@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { rateRecipe, getUserRating } from "@/lib/recipes";
+import { rateRecipe, getUserRating, getRecipeRating } from "@/lib/recipes";
 
 export async function GET(_request, { params }) {
   const u = await getCurrentUser();
   const mine = u ? await getUserRating(u.id, params.id) : 0;
-  return NextResponse.json({ mine });
+  const agg = await getRecipeRating(params.id);
+  return NextResponse.json({ mine, ...agg });
 }
 
 export async function POST(request, { params }) {

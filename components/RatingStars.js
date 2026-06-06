@@ -11,13 +11,15 @@ export default function RatingStars({ recipeId, avg, votes }) {
   const [myVote, setMyVote] = useState(0);
 
   useEffect(() => {
-    if (!user) return;
     let alive = true;
     fetch(`/api/recipes/${recipeId}/rating`).then((r) => r.json()).then((d) => {
-      if (alive && d && typeof d.mine !== "undefined") setMyVote(d.mine || 0);
+      if (!alive || !d) return;
+      if (typeof d.rating !== "undefined") setRating(d.rating);
+      if (typeof d.votes !== "undefined") setCount(d.votes);
+      if (typeof d.mine !== "undefined") setMyVote(d.mine || 0);
     }).catch(() => {});
     return () => { alive = false; };
-  }, [user, recipeId]);
+  }, [recipeId, user]);
   const [hover, setHover] = useState(0);
 
   async function rate(v) {
