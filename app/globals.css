@@ -35,7 +35,7 @@ header{position:sticky;top:0;z-index:50}
 .bar{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:30px;padding:16px 24px}
 .brand{display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1}
 .brand img{display:block;border-radius:10px}
-.brand-name{font-family:var(--serif);font-weight:900;font-size:15px;letter-spacing:-.3px;color:var(--ink)}
+.brand-name{font-family:var(--serif);font-weight:900;font-size:13px;letter-spacing:-.3px;color:var(--ink)}
 nav.links{display:flex;align-items:center}
 nav.links a + a{margin-left:32px}
 nav.links a{font-weight:700;font-size:15px;color:var(--muted);padding:4px 0 2px;
@@ -64,7 +64,7 @@ nav.links a.active{color:var(--ink);background-size:100% 3px;animation:underline
 .mobile-menu .btn-mini{display:inline-flex;width:fit-content;margin-top:12px}
 .mobile-menu .btn-mini.solid{color:#fff}
 .mobile-menu .mm-account{color:var(--ink)}
-.admin-link{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:12.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--paper);background:var(--ink);border:2px solid var(--border);border-radius:30px;padding:7px 14px;box-shadow:2px 2px 0 var(--tomato);transition:.15s;white-space:nowrap}
+.admin-link{display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--paper);background:var(--ink);border:2px solid var(--border);border-radius:30px;padding:7px 14px;box-shadow:2px 2px 0 var(--tomato);transition:.15s;white-space:nowrap}
 .admin-link svg{flex:none}
 .admin-link:hover{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--tomato)}
 .admin-link.active{background:var(--tomato);color:#fff;box-shadow:2px 2px 0 var(--border)}
@@ -383,7 +383,7 @@ textarea.auth-input{height:auto;line-height:1.5}
   main{padding:0 16px 64px}
   .ticker-track .tk{font-size:10px;letter-spacing:2px}
   .ticker-track .tk-sep{margin:0 18px}
-  .brand-name{font-size:13px}
+  .brand-name{font-size:12px}
   .brand img{width:38px;height:38px}
   .hero-section{padding:26px 18px}
   .hero-copy h1{font-size:clamp(30px,8.5vw,44px);letter-spacing:-1px}

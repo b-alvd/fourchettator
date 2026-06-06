@@ -43,7 +43,7 @@ export default function Header() {
       <div className="navbar">
         <div className="bar">
           <Link href="/" className="brand">
-            <Image src="/logo.png" alt="Fourchettator" width={46} height={46} priority />
+            <Image src="/logo.png" alt="Fourchettator" width={35} height={35} priority />
             <span className="brand-name">Fourchettator</span>
           </Link>
 
