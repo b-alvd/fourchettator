@@ -1,32 +1,44 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { Close, Clock, Level, Bowl } from "@/components/Icon";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import PasswordInput from "@/components/PasswordInput";
+import { formatTime } from "@/lib/format";
 
 export default function AccountPanel({ user, favorites }) {
   const router = useRouter();
   const { setUser } = useAuth();
   const [favs, setFavs] = useState(favorites);
 
+  // changement de mot de passe
   const [cur, setCur] = useState("");
   const [next, setNext] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [pwMsg, setPwMsg] = useState("");
   const [pwBusy, setPwBusy] = useState(false);
 
+  // suppression
   const [delMsg, setDelMsg] = useState("");
   const [delBusy, setDelBusy] = useState(false);
 
+  // préférence emails promotionnels
   const [optIn, setOptIn] = useState(user.marketingOptIn !== false);
+
+  // Lit le vrai statut en direct au montage (évite tout affichage périmé).
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/auth/me").then((r) => r.json()).then((d) => { if (alive && d.user) setOptIn(d.user.marketingOptIn !== false); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   async function toggleOptIn(on) {
     setOptIn(on);
     const res = await fetch("/api/account/marketing", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ on }),
     });
-    if (!res.ok) setOptIn(!on);
+    if (!res.ok) setOptIn(!on); // rollback si échec
   }
 
   async function removeFav(id) {
@@ -88,12 +100,12 @@ export default function AccountPanel({ user, favorites }) {
                   <span className="cat">{r.cat}</span>
                 </div>
               </Link>
-              <button className="fav remove" title="Retirer des favoris" onClick={() => removeFav(r.id)}>✕</button>
+              <button className="fav remove" title="Retirer des favoris" onClick={() => removeFav(r.id)}><Close size={15} /></button>
               <Link href={`/recettes/${r.id}`}>
                 <div className="body">
                   <h3>{r.name}</h3>
                   <div className="meta">
-                    <span>⏱ {r.time} min</span><span>⚑ {r.diff}</span><span className="stars">★ {r.rating}</span>
+                    <span><Clock /> {formatTime(r.time)}</span><span><Level /> {r.diff}</span><span className="stars">★ {r.rating}</span>
                   </div>
                 </div>
               </Link>
@@ -102,6 +114,7 @@ export default function AccountPanel({ user, favorites }) {
         </div>
       ) : (
         <div className="fav-empty">
+          <div style={{ marginBottom: 10, color: "var(--muted)" }}><Bowl size={44} /></div>
           <p>Pas encore de favori. <Link href="/recettes">Va t&apos;en trouver un&nbsp;!</Link></p>
         </div>
       )}

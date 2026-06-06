@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { Dice } from "@/components/Icon";
 
 export default function SurpriseButton({ ids }) {
   const router = useRouter();
@@ -9,6 +10,6 @@ export default function SurpriseButton({ ids }) {
     router.push(`/recettes/${id}`);
   }
   return (
-    <button className="btn ghost" onClick={surprise}>Surprends-moi</button>
+    <button className="btn ghost" onClick={surprise}><Dice size={18} /> Surprends-moi</button>
   );
 }

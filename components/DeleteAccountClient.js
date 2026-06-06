@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Check, Trash } from "@/components/Icon";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
@@ -7,7 +8,7 @@ import { useAuth } from "@/components/AuthProvider";
 export default function DeleteAccountClient() {
   const params = useSearchParams();
   const { setUser } = useAuth();
-  const [state, setState] = useState("idle");
+  const [state, setState] = useState("idle"); // idle | deleting | done | error
   const token = params.get("token");
 
   async function confirmDelete() {
@@ -25,7 +26,7 @@ export default function DeleteAccountClient() {
   return (
     <div className="auth-wrap">
       <div className="auth-card" style={{ textAlign: "center" }}>
-        <div className="auth-stamp">{state === "done" ? "👋" : "🗑️"}</div>
+        <div className="auth-stamp">{state === "done" ? <Check size={28} /> : <Trash size={26} />}</div>
         {state === "done" ? (
           <>
             <h1 className="auth-title">Compte supprimé</h1>

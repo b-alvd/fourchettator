@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import { Check, Alert, Hourglass } from "@/components/Icon";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
@@ -7,7 +8,7 @@ import { useAuth } from "@/components/AuthProvider";
 export default function VerifyEmailClient() {
   const params = useSearchParams();
   const { setUser } = useAuth();
-  const [state, setState] = useState("loading");
+  const [state, setState] = useState("loading"); // loading | ok | error
   const ran = useRef(false);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export default function VerifyEmailClient() {
   return (
     <div className="auth-wrap">
       <div className="auth-card" style={{ textAlign: "center" }}>
-        <div className="auth-stamp">{state === "ok" ? "✅" : state === "error" ? "⚠️" : "⏳"}</div>
+        <div className="auth-stamp">{state === "ok" ? <Check size={28} /> : state === "error" ? <Alert size={26} /> : <Hourglass size={26} />}</div>
         {state === "loading" && <h1 className="auth-title">Vérification…</h1>}
         {state === "ok" && (
           <>

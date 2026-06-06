@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { Bowl } from "@/components/Icon";
 import { getRecipes } from "@/lib/recipes";
 import { CATS } from "@/lib/data";
 import RecipeGrid from "@/components/RecipeGrid";
 import Hero from "@/components/Hero";
 
+// Lire la DB à chaque requête plutôt que de figer les données au build.
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
@@ -30,7 +32,9 @@ export default async function HomePage() {
         <RecipeGrid recipes={popular} />
       ) : (
         <div className="empty">
+          <div className="big"><Bowl size={48} /></div>
           <strong>Pas encore de recettes</strong>
+          <p>Les recettes ajoutées depuis le panneau d&apos;administration apparaîtront ici.</p>
         </div>
       )}
     </>

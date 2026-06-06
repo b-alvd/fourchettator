@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { formatTime } from "@/lib/format";
+import { Heart, Clock, Level } from "@/components/Icon";
 
 export default function RecipeCard({ r, isFav, onToggleFav }) {
   return (
@@ -18,16 +20,16 @@ export default function RecipeCard({ r, isFav, onToggleFav }) {
           e.preventDefault();
           onToggleFav(r.id);
         }}
-        style={{ position: "absolute" }}
+        style={{ position: "absolute", color: isFav ? "var(--tomato)" : "var(--ink)" }}
       >
-        {isFav ? "❤️" : "🤍"}
+        <Heart filled={isFav} size={22} />
       </button>
       <Link href={`/recettes/${r.id}`}>
         <div className="body">
           <h3>{r.name}</h3>
           <div className="meta">
-            <span>⏱ {r.time} min</span>
-            <span>⚑ {r.diff}</span>
+            <span><Clock /> {formatTime(r.time)}</span>
+            <span><Level /> {r.diff}</span>
             <span className="stars">★ {r.rating}</span>
           </div>
         </div>

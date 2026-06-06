@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Mail, Bowl } from "@/components/Icon";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import PasswordInput from "@/components/PasswordInput";
@@ -7,7 +8,7 @@ import PasswordInput from "@/components/PasswordInput";
 export default function AuthForm() {
   const router = useRouter();
   const { setUser } = useAuth();
-  const [mode, setMode] = useState("login");
+  const [mode, setMode] = useState("login"); // "login" | "register"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -53,7 +54,7 @@ export default function AuthForm() {
     return (
       <div className="auth-wrap">
         <div className="auth-card" style={{ textAlign: "center" }}>
-          <div className="auth-stamp">📬</div>
+          <div className="auth-stamp"><Mail size={28} /></div>
           <h1 className="auth-title">Vérifie ta boîte mail</h1>
           <p className="auth-sub">On a envoyé un lien de confirmation à <b>{email}</b>. Clique dessus pour activer ton compte.</p>
           {info && <div className="auth-info">{info}</div>}
@@ -69,7 +70,7 @@ export default function AuthForm() {
   return (
     <div className="auth-wrap">
       <div className="auth-card">
-        <div className="auth-stamp">🍲</div>
+        <div className="auth-stamp"><Bowl size={30} /></div>
         <h1 className="auth-title">{isRegister ? "Rejoins la cuisine" : "Content de te revoir"}</h1>
         <p className="auth-sub">{isRegister ? "Crée ton compte pour enregistrer tes recettes favorites." : "Connecte-toi pour retrouver tes favoris."}</p>
 

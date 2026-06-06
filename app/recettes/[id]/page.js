@@ -1,15 +1,20 @@
 import Link from "next/link";
+import { formatTime } from "@/lib/format";
 import { notFound } from "next/navigation";
 import { getRecipe, getUserRating } from "@/lib/recipes";
 import { getCurrentUser } from "@/lib/auth";
-import RatingStars from "@/components/RatingStars";
 import IngredientsPanel from "@/components/IngredientsPanel";
+import RatingStars from "@/components/RatingStars";
 
 export default async function RecipePage({ params }) {
   const r = await getRecipe(params.id);
   if (!r) notFound();
   const user = await getCurrentUser();
   const mine = user ? await getUserRating(user.id, r.id) : 0;
+
+  // Regroupe les étapes par groupe de section (identité = position, pas le titre,
+  // pour que deux sections de même nom restent distinctes). Repli sur le titre
+  // pour d'éventuelles anciennes données sans n° de groupe.
   const keyOf = (s) => (s.group !== null && s.group !== undefined ? `g${s.group}` : `t:${s.section || ""}`);
   const hasSections = r.steps.some((s) => (s.group !== null && s.group !== undefined) || s.section);
   const raw = [];
@@ -36,7 +41,7 @@ export default async function RecipePage({ params }) {
           <h1>{r.name}</h1>
           <p className="dblurb">{r.blurb}</p>
           <div className="stats">
-            <div className="stat"><div className="v">{r.time}&#39;</div><div className="k">Temps</div></div>
+            <div className="stat"><div className="v">{formatTime(r.time, true)}</div><div className="k">Temps</div></div>
             <div className="stat"><div className="v">{r.diff}</div><div className="k">Niveau</div></div>
             <div className="stat"><div className="v">★{r.rating}</div><div className="k">Note</div></div>
             <div className="stat"><div className="v">{r.kcal}</div><div className="k">kcal/pers</div></div>

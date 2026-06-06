@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Lock, Shield } from "@/components/Icon";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
@@ -11,7 +12,7 @@ export default function SecureAccountClient() {
   const token = params.get("token");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
-  const [state, setState] = useState("idle");
+  const [state, setState] = useState("idle"); // idle | busy | done | error
   const [msg, setMsg] = useState("");
 
   async function submit() {
@@ -33,7 +34,7 @@ export default function SecureAccountClient() {
   return (
     <div className="auth-wrap">
       <div className="auth-card" style={{ textAlign: "center" }}>
-        <div className="auth-stamp">{state === "done" ? "🔒" : "🛡️"}</div>
+        <div className="auth-stamp">{state === "done" ? <Lock size={28} /> : <Shield size={28} />}</div>
         {state === "done" ? (
           <>
             <h1 className="auth-title">Compte sécurisé</h1>

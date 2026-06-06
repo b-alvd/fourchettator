@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Search } from "@/components/Icon";
 import { CATS } from "@/lib/data";
 import RecipeCard from "@/components/RecipeCard";
 import { useFavorites } from "@/components/useFavorites";
@@ -21,7 +22,7 @@ export default function Browse({ initialCat = "Tous" }) {
         .then((r) => r.json())
         .then((d) => { setRecipes(d.recipes || []); setLoading(false); })
         .catch(() => {});
-    }, 180);
+    }, 180); // petit debounce sur la frappe
     return () => { clearTimeout(t); ctrl.abort(); };
   }, [search, cat, sort]);
 
@@ -29,7 +30,7 @@ export default function Browse({ initialCat = "Tous" }) {
     <>
       <div className="browse-top"><h2>Explorer les recettes</h2></div>
       <div className="search-big">
-        <span className="ic">🔍</span>
+        <span className="ic"><Search size={18} /></span>
         <input
           type="text"
           placeholder="Poulet, tarte, végétarien…"
@@ -60,6 +61,7 @@ export default function Browse({ initialCat = "Tous" }) {
       ) : (
         !loading && (
           <div className="empty">
+            <div className="big"><Search size={46} /></div>
             <strong>Aucune recette trouvée</strong>
             <p>Essaie un autre mot-clé ou une autre catégorie.</p>
           </div>

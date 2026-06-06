@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Close, Edit } from "@/components/Icon";
 import AdminBroadcast from "@/components/AdminBroadcast";
 
 const DIFFS = ["Facile", "Moyen", "Difficile"];
@@ -13,6 +14,7 @@ const GRADS = [
 
 const EMPTY = (cat) => ({ name: "", cat, image: "", time: 30, diff: "Facile", kcal: 400, serv: 4, blurb: "", grad: GRADS[0][1] });
 
+// Redimensionne + compresse l'image côté navigateur, puis renvoie une data URL JPEG.
 function fileToDataUrl(file, maxDim = 1000, quality = 0.72) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -43,13 +45,14 @@ export default function AdminPanel({ recipes: initial, cats }) {
   const [f, setF] = useState(EMPTY(cats[0]));
   const [ing, setIng] = useState([{ name: "", qty: "", unit: "" }]);
   const [useSections, setUseSections] = useState(false);
-  const [steps, setSteps] = useState([""]);
-  const [sections, setSections] = useState([{ title: "", steps: [""] }]);
+  const [steps, setSteps] = useState([""]);                          // mode simple
+  const [sections, setSections] = useState([{ title: "", steps: [""] }]); // mode sections
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
   const set = (k, v) => setF((s) => ({ ...s, [k]: v }));
 
+  // --- bascule simple <-> sections en conservant le travail en cours ---
   function toggleSections(on) {
     if (on) {
       setSections([{ title: "", steps: steps.length ? steps : [""] }]);
@@ -60,6 +63,7 @@ export default function AdminPanel({ recipes: initial, cats }) {
     setUseSections(on);
   }
 
+  // --- handlers sections ---
   const setSectionTitle = (gi, v) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, title: v } : g)));
   const setSectionStep = (gi, si, v) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, steps: g.steps.map((s, j) => (j === si ? v : s)) } : g)));
   const addSectionStep = (gi) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, steps: [...g.steps, ""] } : g)));
@@ -181,6 +185,7 @@ export default function AdminPanel({ recipes: initial, cats }) {
           </div>
         )}
 
+        {/* ---- Ingrédients ---- */}
         <div style={{ marginTop: 18 }}>
           <span className="admin-field" style={{ fontWeight: 700, fontSize: 13, color: "var(--ink2)" }}>Ingrédients (qté / unité facultatives)</span>
           {ing.map((it, idx) => (
@@ -188,12 +193,13 @@ export default function AdminPanel({ recipes: initial, cats }) {
               <input className="auth-input" placeholder="Nom" value={it.name} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, name: e.target.value } : x))} />
               <input className="auth-input" placeholder="Qté" style={{ maxWidth: 90 }} value={it.qty} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, qty: e.target.value } : x))} />
               <input className="auth-input" placeholder="Unité" style={{ maxWidth: 110 }} value={it.unit} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, unit: e.target.value } : x))} />
-              <button className="x" onClick={() => setIng((a) => a.length > 1 ? a.filter((_, i) => i !== idx) : a)}>✕</button>
+              <button className="x" onClick={() => setIng((a) => a.length > 1 ? a.filter((_, i) => i !== idx) : a)}><Close size={15} /></button>
             </div>
           ))}
           <button className="mini-add" onClick={() => setIng((a) => [...a, { name: "", qty: "", unit: "" }])}>+ ajouter un ingrédient</button>
         </div>
 
+        {/* ---- Étapes ---- */}
         <div style={{ marginTop: 18 }}>
           <span className="admin-field" style={{ fontWeight: 700, fontSize: 13, color: "var(--ink2)" }}>Étapes</span>
           <label style={{ display: "flex", alignItems: "center", gap: 8, margin: "4px 0 12px", fontWeight: 700, fontSize: 13, color: "var(--ink2)", cursor: "pointer" }}>
@@ -206,7 +212,7 @@ export default function AdminPanel({ recipes: initial, cats }) {
               {steps.map((s, idx) => (
                 <div className="admin-row" key={idx}>
                   <input className="auth-input" placeholder={`Étape ${idx + 1}`} value={s} onChange={(e) => setSteps((a) => a.map((x, i) => i === idx ? e.target.value : x))} />
-                  <button className="x" onClick={() => setSteps((a) => a.length > 1 ? a.filter((_, i) => i !== idx) : a)}>✕</button>
+                  <button className="x" onClick={() => setSteps((a) => a.length > 1 ? a.filter((_, i) => i !== idx) : a)}><Close size={15} /></button>
                 </div>
               ))}
               <button className="mini-add" onClick={() => setSteps((a) => [...a, ""])}>+ ajouter une étape</button>
@@ -219,12 +225,12 @@ export default function AdminPanel({ recipes: initial, cats }) {
                 <div className="sec-block" key={gi}>
                   <div className="admin-row">
                     <input className="auth-input" style={{ fontWeight: 700 }} placeholder="Titre de la section (ex. La pâte)" value={g.title} onChange={(e) => setSectionTitle(gi, e.target.value)} />
-                    <button className="x" onClick={() => removeSection(gi)} title="Supprimer la section">✕</button>
+                    <button className="x" onClick={() => removeSection(gi)} title="Supprimer la section"><Close size={15} /></button>
                   </div>
                   {g.steps.map((s, si) => (
                     <div className="admin-row" key={si} style={{ marginLeft: 16 }}>
                       <input className="auth-input" placeholder={`Étape ${si + 1}`} value={s} onChange={(e) => setSectionStep(gi, si, e.target.value)} />
-                      <button className="x" onClick={() => removeSectionStep(gi, si)}>✕</button>
+                      <button className="x" onClick={() => removeSectionStep(gi, si)}><Close size={15} /></button>
                     </div>
                   ))}
                   <button className="mini-add" style={{ marginLeft: 16 }} onClick={() => addSectionStep(gi)}>+ étape</button>
@@ -250,9 +256,9 @@ export default function AdminPanel({ recipes: initial, cats }) {
               ? <img className="em-img" src={r.image} alt="" />
               : <span className="em-grad" style={{ background: r.grad }} />}
             <span className="nm">{r.name}</span>
-            <span className="meta">{r.cat} · ★ {r.rating || "-"} {r.votes ? `(${r.votes})` : ""}</span>
-            <button className="edit" onClick={() => startEdit(r)} title="Modifier">✎</button>
-            <button className="x" onClick={() => remove(r.id)} title="Supprimer">✕</button>
+            <span className="meta">{r.cat} · ★ {r.rating || "—"} {r.votes ? `(${r.votes})` : ""}</span>
+            <button className="edit" onClick={() => startEdit(r)} title="Modifier"><Edit size={15} /></button>
+            <button className="x" onClick={() => remove(r.id)} title="Supprimer"><Close size={15} /></button>
           </div>
         ))}
       </div>
