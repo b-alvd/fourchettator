@@ -10,6 +10,8 @@ export default function AdminPage() {
   const router = useRouter();
   const [recipes, setRecipes] = useState(null);
 
+  useEffect(() => { document.title = "Fourchettator - Admin"; }, []);
+
   useEffect(() => {
     if (!loading && (!user || !user.isAdmin)) router.replace("/");
   }, [loading, user, router]);

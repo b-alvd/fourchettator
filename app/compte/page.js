@@ -9,6 +9,8 @@ export default function ComptePage() {
   const router = useRouter();
   const [favorites, setFavorites] = useState([]);
 
+  useEffect(() => { document.title = "Fourchettator - Mon compte"; }, []);
+
   useEffect(() => {
     if (!loading && !user) router.replace("/connexion");
   }, [loading, user, router]);
