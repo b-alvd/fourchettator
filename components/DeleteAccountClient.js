@@ -8,7 +8,7 @@ import { useAuth } from "@/components/AuthProvider";
 export default function DeleteAccountClient() {
   const params = useSearchParams();
   const { setUser } = useAuth();
-  const [state, setState] = useState("idle"); // idle | deleting | done | error
+  const [state, setState] = useState("idle");
   const token = params.get("token");
 
   async function confirmDelete() {

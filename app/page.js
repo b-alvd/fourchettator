@@ -5,8 +5,7 @@ import { CATS } from "@/lib/data";
 import RecipeGrid from "@/components/RecipeGrid";
 import Hero from "@/components/Hero";
 
-// Lire la DB à chaque requête plutôt que de figer les données au build.
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
   const all = await getRecipes({ sort: "pop" });

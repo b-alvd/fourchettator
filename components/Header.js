@@ -19,7 +19,7 @@ export default function Header() {
   const cls = (isActive) => (mounted && isActive ? "active" : "");
 
   const [open, setOpen] = useState(false);
-  useEffect(() => setOpen(false), [path]); // referme le menu à chaque navigation
+  useEffect(() => setOpen(false), [path]);
   const close = () => setOpen(false);
 
   async function logout() {

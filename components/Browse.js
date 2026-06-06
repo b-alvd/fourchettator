@@ -1,45 +1,38 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search } from "@/components/Icon";
 import { CATS } from "@/lib/data";
 import RecipeCard from "@/components/RecipeCard";
 import { useFavorites } from "@/components/useFavorites";
 
-export default function Browse({ initialCat = "Tous", initialRecipes = [] }) {
-  const [cat, setCat] = useState(initialCat);
+const norm = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+export default function Browse({ allRecipes = [] }) {
+  const params = useSearchParams();
+  const [cat, setCat] = useState(params.get("cat") || "Tous");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("pop");
-  const [recipes, setRecipes] = useState(initialRecipes);
-  const [loading, setLoading] = useState(false);
-  const first = useRef(true);
   const { favorites, toggle } = useFavorites();
 
-  useEffect(() => {
-    // La liste initiale vient du serveur : on ne refetch qu'au changement de filtre.
-    if (first.current) { first.current = false; return; }
-    const ctrl = new AbortController();
-    const t = setTimeout(() => {
-      const qs = new URLSearchParams({ q: search, cat, sort });
-      setLoading(true);
-      fetch(`/api/recipes?${qs}`, { signal: ctrl.signal })
-        .then((r) => r.json())
-        .then((d) => { setRecipes(d.recipes || []); setLoading(false); })
-        .catch(() => {});
-    }, 180); // petit debounce sur la frappe
-    return () => { clearTimeout(t); ctrl.abort(); };
-  }, [search, cat, sort]);
+  const recipes = useMemo(() => {
+    let list = allRecipes;
+    if (cat !== "Tous") list = list.filter((r) => r.cat === cat);
+    const q = norm(search.trim());
+    if (q) list = list.filter((r) => norm(r.name).includes(q));
+    const arr = [...list];
+    if (sort === "az") arr.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+    else if (sort === "time") arr.sort((a, b) => (a.time || 0) - (b.time || 0));
+    else arr.sort((a, b) => (b.votes || 0) - (a.votes || 0) || (b.rating || 0) - (a.rating || 0));
+    return arr;
+  }, [allRecipes, cat, search, sort]);
 
   return (
     <>
       <div className="browse-top"><h2>Explorer les recettes</h2></div>
       <div className="search-big">
         <span className="ic"><Search size={18} /></span>
-        <input
-          type="text"
-          placeholder="Poulet, tarte, végétarien…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <input type="text" placeholder="Poulet, tarte, végétarien…" value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
       <div className="toolbar">
         <div className="chips" style={{ margin: 0 }}>
@@ -62,13 +55,11 @@ export default function Browse({ initialCat = "Tous", initialRecipes = [] }) {
           ))}
         </div>
       ) : (
-        !loading && (
-          <div className="empty">
-            <div className="big"><Search size={46} /></div>
-            <strong>Aucune recette trouvée</strong>
-            <p>Essaie un autre mot-clé ou une autre catégorie.</p>
-          </div>
-        )
+        <div className="empty">
+          <div className="big"><Search size={46} /></div>
+          <strong>Aucune recette trouvée</strong>
+          <p>Essaie un autre mot-clé ou une autre catégorie.</p>
+        </div>
       )}
     </>
   );

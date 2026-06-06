@@ -8,7 +8,7 @@ import PasswordInput from "@/components/PasswordInput";
 export default function AuthForm() {
   const router = useRouter();
   const { setUser } = useAuth();
-  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");

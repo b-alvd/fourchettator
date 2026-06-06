@@ -1,16 +1,26 @@
 import Link from "next/link";
 import { formatTime } from "@/lib/format";
 import { notFound } from "next/navigation";
-import { getRecipe, getUserRating } from "@/lib/recipes";
-import { getCurrentUser } from "@/lib/auth";
+import { getRecipe, getRecipes } from "@/lib/recipes";
 import IngredientsPanel from "@/components/IngredientsPanel";
 import RatingStars from "@/components/RatingStars";
+
+export const revalidate = 60;
+
+// Pré-génère les fiches existantes au build (chargement instantané).
+// Les recettes ajoutées ensuite sont générées à la demande puis mises en cache.
+export async function generateStaticParams() {
+  try {
+    const all = await getRecipes();
+    return all.map((r) => ({ id: String(r.id) }));
+  } catch {
+    return [];
+  }
+}
 
 export default async function RecipePage({ params }) {
   const r = await getRecipe(params.id);
   if (!r) notFound();
-  const user = await getCurrentUser();
-  const mine = user ? await getUserRating(user.id, r.id) : 0;
 
   // Regroupe les étapes par groupe de section (identité = position, pas le titre,
   // pour que deux sections de même nom restent distinctes). Repli sur le titre
@@ -46,7 +56,7 @@ export default async function RecipePage({ params }) {
             <div className="stat"><div className="v">★{r.rating}</div><div className="k">Note</div></div>
             <div className="stat"><div className="v">{r.kcal}</div><div className="k">kcal/pers</div></div>
           </div>
-          <RatingStars recipeId={r.id} avg={r.rating} votes={r.votes || 0} mine={mine} />
+          <RatingStars recipeId={r.id} avg={r.rating} votes={r.votes || 0} />
         </div>
       </div>
 

@@ -14,7 +14,6 @@ const GRADS = [
 
 const EMPTY = (cat) => ({ name: "", cat, image: "", time: 30, diff: "Facile", kcal: 400, serv: 4, blurb: "", grad: GRADS[0][1] });
 
-// Redimensionne + compresse l'image côté navigateur, puis renvoie une data URL JPEG.
 function fileToDataUrl(file, maxDim = 1000, quality = 0.72) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -45,14 +44,13 @@ export default function AdminPanel({ recipes: initial, cats }) {
   const [f, setF] = useState(EMPTY(cats[0]));
   const [ing, setIng] = useState([{ name: "", qty: "", unit: "" }]);
   const [useSections, setUseSections] = useState(false);
-  const [steps, setSteps] = useState([""]);                          // mode simple
-  const [sections, setSections] = useState([{ title: "", steps: [""] }]); // mode sections
+  const [steps, setSteps] = useState([""]);
+  const [sections, setSections] = useState([{ title: "", steps: [""] }]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
   const set = (k, v) => setF((s) => ({ ...s, [k]: v }));
 
-  // --- bascule simple <-> sections en conservant le travail en cours ---
   function toggleSections(on) {
     if (on) {
       setSections([{ title: "", steps: steps.length ? steps : [""] }]);
@@ -63,7 +61,6 @@ export default function AdminPanel({ recipes: initial, cats }) {
     setUseSections(on);
   }
 
-  // --- handlers sections ---
   const setSectionTitle = (gi, v) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, title: v } : g)));
   const setSectionStep = (gi, si, v) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, steps: g.steps.map((s, j) => (j === si ? v : s)) } : g)));
   const addSectionStep = (gi) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, steps: [...g.steps, ""] } : g)));
@@ -185,7 +182,6 @@ export default function AdminPanel({ recipes: initial, cats }) {
           </div>
         )}
 
-        {/* ---- Ingrédients ---- */}
         <div style={{ marginTop: 18 }}>
           <span className="admin-field" style={{ fontWeight: 700, fontSize: 13, color: "var(--ink2)" }}>Ingrédients (qté / unité facultatives)</span>
           {ing.map((it, idx) => (
@@ -199,7 +195,6 @@ export default function AdminPanel({ recipes: initial, cats }) {
           <button className="mini-add" onClick={() => setIng((a) => [...a, { name: "", qty: "", unit: "" }])}>+ ajouter un ingrédient</button>
         </div>
 
-        {/* ---- Étapes ---- */}
         <div style={{ marginTop: 18 }}>
           <span className="admin-field" style={{ fontWeight: 700, fontSize: 13, color: "var(--ink2)" }}>Étapes</span>
           <label style={{ display: "flex", alignItems: "center", gap: 8, margin: "4px 0 12px", fontWeight: 700, fontSize: 13, color: "var(--ink2)", cursor: "pointer" }}>

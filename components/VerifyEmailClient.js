@@ -8,7 +8,7 @@ import { useAuth } from "@/components/AuthProvider";
 export default function VerifyEmailClient() {
   const params = useSearchParams();
   const { setUser } = useAuth();
-  const [state, setState] = useState("loading"); // loading | ok | error
+  const [state, setState] = useState("loading");
   const ran = useRef(false);
 
   useEffect(() => {

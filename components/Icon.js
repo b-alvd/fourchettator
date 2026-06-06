@@ -1,5 +1,3 @@
-// Jeu d'icônes maison : SVG trait fin, couleur héritée (currentColor).
-// Taille via prop `size` (défaut 1em → suit la taille de police du parent).
 function Svg({ size = "1em", fill = "none", children, ...p }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor"

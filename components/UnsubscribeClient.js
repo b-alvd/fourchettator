@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function UnsubscribeClient() {
   const params = useSearchParams();
-  const [state, setState] = useState("loading"); // loading | ok | error
+  const [state, setState] = useState("loading");
   const ran = useRef(false);
 
   useEffect(() => {

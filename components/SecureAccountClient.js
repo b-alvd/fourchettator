@@ -12,7 +12,7 @@ export default function SecureAccountClient() {
   const token = params.get("token");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
-  const [state, setState] = useState("idle"); // idle | busy | done | error
+  const [state, setState] = useState("idle");
   const [msg, setMsg] = useState("");
 
   async function submit() {
