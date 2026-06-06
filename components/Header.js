@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
-import { Menu, Close } from "@/components/Icon";
+import { Menu, Close, Shield } from "@/components/Icon";
 
 const TAGS = ["Fait maison", "De saison", "Testé en cuisine", "Sans prise de tête", "Pour tous les jours"];
 const LOOP = Array.from({ length: 5 }).flatMap(() => TAGS);
@@ -19,7 +19,7 @@ export default function Header() {
   const cls = (isActive) => (mounted && isActive ? "active" : "");
 
   const [open, setOpen] = useState(false);
-  useEffect(() => setOpen(false), [path]);
+  useEffect(() => setOpen(false), [path]); // referme le menu à chaque navigation
   const close = () => setOpen(false);
 
   async function logout() {
@@ -50,10 +50,14 @@ export default function Header() {
           <nav className="links">
             <Link href="/" className={cls(path === "/")}>Accueil</Link>
             <Link href="/recettes" className={cls(path.startsWith("/recettes"))}>Recettes</Link>
-            {user?.isAdmin && <Link href="/admin" className={cls(path === "/admin")}>Admin</Link>}
           </nav>
 
           <div className="header-right">
+            {user?.isAdmin && (
+              <Link href="/admin" className={`admin-link ${cls(path === "/admin")}`} aria-label="Administration">
+                <Shield size={15} /> Admin
+              </Link>
+            )}
             {user ? (
               <div className="usermenu">
                 <Link href="/compte" className={`hello ${cls(path === "/compte")}`}>

@@ -46,7 +46,7 @@ nav.links a:hover{color:var(--ink);background-size:100% 3px}
 nav.links a.active{color:var(--ink);background-size:100% 3px;animation:underlineGrow .35s ease both}
 @keyframes underlineGrow{from{background-size:0% 3px}to{background-size:100% 3px}}
 
-.header-right{margin-left:auto;display:flex;align-items:center}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:14px}
 .usermenu{display:flex;align-items:center;gap:14px}
 .hello{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14px;color:var(--ink);transition:.15s}
 .hello:hover{color:var(--tomato)}
@@ -64,6 +64,10 @@ nav.links a.active{color:var(--ink);background-size:100% 3px;animation:underline
 .mobile-menu .btn-mini{display:inline-flex;width:fit-content;margin-top:12px}
 .mobile-menu .btn-mini.solid{color:#fff}
 .mobile-menu .mm-account{color:var(--ink)}
+.admin-link{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:12.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--paper);background:var(--ink);border:2px solid var(--border);border-radius:30px;padding:7px 14px;box-shadow:2px 2px 0 var(--tomato);transition:.15s;white-space:nowrap}
+.admin-link svg{flex:none}
+.admin-link:hover{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--tomato)}
+.admin-link.active{background:var(--tomato);color:#fff;box-shadow:2px 2px 0 var(--border)}
 
 main{max-width:1180px;margin:0 auto;padding:0 24px 90px;overflow-x:clip}
 .fade{animation:fade .5s ease both}
@@ -363,7 +367,7 @@ textarea.auth-input{height:auto;line-height:1.5}
 }
 @media(max-width:880px){
   .bar{padding:12px 18px}
-  nav.links,.header-right{display:none}
+  nav.links,.header-right,.admin-link{display:none}
   .burger{display:inline-flex}
   .mobile-menu.open{display:block}
   .hero,.detail-hero,.detail-body,.hero-section{grid-template-columns:1fr}
