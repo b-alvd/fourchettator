@@ -266,7 +266,6 @@ footer{background:var(--ink);margin-top:40px;color:var(--paper)}
 .foot-links a:hover{color:var(--saffron)}
 .foot-tag{font-family:var(--serif);font-style:italic;color:var(--saffron)}
 .foot-credit{text-decoration:underline;text-underline-offset:2px;transition:.15s}
-.foot-credit:hover{color:var(--paper)}
 
 .rating{display:flex;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}
 .rating-stars{display:flex;gap:2px}

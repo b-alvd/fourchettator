@@ -10,8 +10,7 @@ export default function Footer() {
           <span>Fourchettator</span>
         </Link>
         <span className="foot-tag">
-          Fait avec amour &amp; un peu de beurre par{" "}
-          <a href="https://basilealeveque.fr" target="_blank" rel="noopener noreferrer" className="foot-credit">b_alvd</a>.
+          Fait avec amour &amp; un peu de beurre par <span className="foot-credit">b_alvd</span>
         </span>
         <nav className="foot-links">
           <Link href="/">Accueil</Link>
