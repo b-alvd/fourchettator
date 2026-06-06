@@ -1,19 +1,22 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Search } from "@/components/Icon";
 import { CATS } from "@/lib/data";
 import RecipeCard from "@/components/RecipeCard";
 import { useFavorites } from "@/components/useFavorites";
 
-export default function Browse({ initialCat = "Tous" }) {
+export default function Browse({ initialCat = "Tous", initialRecipes = [] }) {
   const [cat, setCat] = useState(initialCat);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("pop");
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [recipes, setRecipes] = useState(initialRecipes);
+  const [loading, setLoading] = useState(false);
+  const first = useRef(true);
   const { favorites, toggle } = useFavorites();
 
   useEffect(() => {
+    // La liste initiale vient du serveur : on ne refetch qu'au changement de filtre.
+    if (first.current) { first.current = false; return; }
     const ctrl = new AbortController();
     const t = setTimeout(() => {
       const qs = new URLSearchParams({ q: search, cat, sort });
