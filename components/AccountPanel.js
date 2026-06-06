@@ -11,18 +11,23 @@ export default function AccountPanel({ user, favorites }) {
   const router = useRouter();
   const { setUser } = useAuth();
   const [favs, setFavs] = useState(favorites);
+  useEffect(() => { setFavs(favorites); }, [favorites]); // synchronise quand les favoris client arrivent
 
+  // changement de mot de passe
   const [cur, setCur] = useState("");
   const [next, setNext] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [pwMsg, setPwMsg] = useState("");
   const [pwBusy, setPwBusy] = useState(false);
 
+  // suppression
   const [delMsg, setDelMsg] = useState("");
   const [delBusy, setDelBusy] = useState(false);
 
+  // préférence emails promotionnels
   const [optIn, setOptIn] = useState(user.marketingOptIn !== false);
 
+  // Lit le vrai statut en direct au montage (évite tout affichage périmé).
   useEffect(() => {
     let alive = true;
     fetch("/api/auth/me").then((r) => r.json()).then((d) => { if (alive && d.user) setOptIn(d.user.marketingOptIn !== false); }).catch(() => {});
@@ -34,7 +39,7 @@ export default function AccountPanel({ user, favorites }) {
     const res = await fetch("/api/account/marketing", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ on }),
     });
-    if (!res.ok) setOptIn(!on);
+    if (!res.ok) setOptIn(!on); // rollback si échec
   }
 
   async function removeFav(id) {

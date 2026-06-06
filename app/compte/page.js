@@ -1,18 +1,39 @@
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
-import { getFavorites } from "@/lib/favorites";
-import { getRecipes } from "@/lib/recipes";
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 import AccountPanel from "@/components/AccountPanel";
 
-export const dynamic = "force-dynamic";
-export const metadata = { title: "Fourchettator - Mon compte" };
+export default function ComptePage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [favorites, setFavorites] = useState([]);
 
-export default async function ComptePage() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/connexion");
+  useEffect(() => {
+    if (!loading && !user) router.replace("/connexion");
+  }, [loading, user, router]);
 
-  const [favIds, all] = await Promise.all([getFavorites(user.id), getRecipes()]);
-  const favorites = all.filter((r) => favIds.includes(r.id));
+  useEffect(() => {
+    if (!user) return;
+    let alive = true;
+    (async () => {
+      try {
+        const [favRes, recRes] = await Promise.all([fetch("/api/favorites"), fetch("/api/recipes?sort=pop")]);
+        const favIds = (await favRes.json()).favorites || [];
+        const all = (await recRes.json()).recipes || [];
+        if (alive) setFavorites(all.filter((r) => favIds.includes(r.id)));
+      } catch { if (alive) setFavorites([]); }
+    })();
+    return () => { alive = false; };
+  }, [user]);
 
+  if (loading || !user) {
+    return (
+      <div className="account">
+        <div className="account-head" style={{ minHeight: 70 }} />
+        <p style={{ color: "var(--muted)" }}>Chargement…</p>
+      </div>
+    );
+  }
   return <AccountPanel user={user} favorites={favorites} />;
 }

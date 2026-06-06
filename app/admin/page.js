@@ -1,15 +1,31 @@
-import { redirect } from "next/navigation";
-import { getCurrentUser, isAdmin } from "@/lib/auth";
-import { getRecipes } from "@/lib/recipes";
-import { CATS } from "@/lib/data";
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 import AdminPanel from "@/components/AdminPanel";
+import { CATS } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
-export const metadata = { title: "Fourchettator - Admin" };
+export default function AdminPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [recipes, setRecipes] = useState(null);
 
-export default async function AdminPage() {
-  const user = await getCurrentUser();
-  if (!isAdmin(user)) redirect("/");
-  const recipes = await getRecipes({ sort: "az" });
-  return <AdminPanel recipes={recipes} cats={CATS.slice(1)} />;
+  useEffect(() => {
+    if (!loading && (!user || !user.isAdmin)) router.replace("/");
+  }, [loading, user, router]);
+
+  useEffect(() => {
+    if (!user?.isAdmin) return;
+    fetch("/api/recipes?sort=az").then((r) => r.json()).then((d) => setRecipes(d.recipes || [])).catch(() => setRecipes([]));
+  }, [user]);
+
+  if (loading || !user || !user.isAdmin) {
+    return (
+      <div className="account">
+        <div className="sec-head" style={{ marginTop: 30 }}><h2>Administration</h2></div>
+        <p style={{ color: "var(--muted)" }}>Chargement…</p>
+      </div>
+    );
+  }
+  return <AdminPanel recipes={recipes || []} cats={CATS.slice(1)} />;
 }
