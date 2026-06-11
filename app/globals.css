@@ -356,6 +356,9 @@ textarea.auth-input{height:auto;line-height:1.5}
 .prop svg,.meta span svg,.btn svg,.btn-mini svg,.back svg,.tagdot svg,.stepper svg{flex:none}
 .card .meta{flex-wrap:wrap;row-gap:6px}
 
+.ing li.ing-head,.ing li.ing-head:hover{display:block;background:none;border:none;box-shadow:none;padding:0;margin:18px 0 8px;cursor:default;font-family:var(--serif);font-weight:800;font-size:14px;letter-spacing:.4px;text-transform:uppercase;color:var(--tomato-d)}
+.ing li.ing-head:first-child{margin-top:0}
+
 @media(max-width:980px){
   main{padding:0 22px 80px}
   .hero-section{padding:48px 40px}

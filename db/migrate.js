@@ -34,6 +34,8 @@ async function main() {
     "ALTER TABLE recipes ADD COLUMN image TEXT",
     "ALTER TABLE steps ADD COLUMN section TEXT",
     "ALTER TABLE steps ADD COLUMN section_group INTEGER",
+    "ALTER TABLE ingredients ADD COLUMN section TEXT",
+    "ALTER TABLE ingredients ADD COLUMN section_group INTEGER",
     "ALTER TABLE users ADD COLUMN session_version INTEGER NOT NULL DEFAULT 0",
     "ALTER TABLE users ADD COLUMN marketing_opt_in INTEGER NOT NULL DEFAULT 1",
   ];

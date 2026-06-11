@@ -14,7 +14,6 @@ const GRADS = [
 
 const EMPTY = (cat) => ({ name: "", cat, image: "", time: 30, diff: "Facile", kcal: 400, serv: 4, blurb: "", grad: GRADS[0][1] });
 
-// Redimensionne + compresse l'image côté navigateur, puis renvoie une data URL JPEG.
 function fileToDataUrl(file, maxDim = 1000, quality = 0.72) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -45,6 +44,8 @@ export default function AdminPanel({ recipes: initial, cats }) {
   const [editingId, setEditingId] = useState(null);
   const [f, setF] = useState(EMPTY(cats[0]));
   const [ing, setIng] = useState([{ name: "", qty: "", unit: "" }]);
+  const [useIngSections, setUseIngSections] = useState(false);
+  const [ingSections, setIngSections] = useState([{ title: "", items: [{ name: "", qty: "", unit: "" }] }]);
   const [useSections, setUseSections] = useState(false);
   const [steps, setSteps] = useState([""]);                          // mode simple
   const [sections, setSections] = useState([{ title: "", steps: [""] }]); // mode sections
@@ -53,7 +54,6 @@ export default function AdminPanel({ recipes: initial, cats }) {
 
   const set = (k, v) => setF((s) => ({ ...s, [k]: v }));
 
-  // --- bascule simple <-> sections en conservant le travail en cours ---
   function toggleSections(on) {
     if (on) {
       setSections([{ title: "", steps: steps.length ? steps : [""] }]);
@@ -64,13 +64,27 @@ export default function AdminPanel({ recipes: initial, cats }) {
     setUseSections(on);
   }
 
-  // --- handlers sections ---
   const setSectionTitle = (gi, v) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, title: v } : g)));
   const setSectionStep = (gi, si, v) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, steps: g.steps.map((s, j) => (j === si ? v : s)) } : g)));
   const addSectionStep = (gi) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, steps: [...g.steps, ""] } : g)));
   const removeSectionStep = (gi, si) => setSections((a) => a.map((g, i) => (i === gi ? { ...g, steps: g.steps.length > 1 ? g.steps.filter((_, j) => j !== si) : g.steps } : g)));
   const addSection = () => setSections((a) => [...a, { title: "", steps: [""] }]);
   const removeSection = (gi) => setSections((a) => (a.length > 1 ? a.filter((_, i) => i !== gi) : a));
+
+  function toggleIngSections(on) {
+    if (on) setIngSections([{ title: "", items: ing.length ? ing : [{ name: "", qty: "", unit: "" }] }]);
+    else {
+      const flat = ingSections.flatMap((g) => g.items);
+      setIng(flat.length ? flat : [{ name: "", qty: "", unit: "" }]);
+    }
+    setUseIngSections(on);
+  }
+  const setIngSecTitle = (gi, v) => setIngSections((a) => a.map((g, i) => (i === gi ? { ...g, title: v } : g)));
+  const setIngSecItem = (gi, ii, k, v) => setIngSections((a) => a.map((g, i) => (i === gi ? { ...g, items: g.items.map((it, j) => (j === ii ? { ...it, [k]: v } : it)) } : g)));
+  const addIngSecItem = (gi) => setIngSections((a) => a.map((g, i) => (i === gi ? { ...g, items: [...g.items, { name: "", qty: "", unit: "" }] } : g)));
+  const removeIngSecItem = (gi, ii) => setIngSections((a) => a.map((g, i) => (i === gi ? { ...g, items: g.items.length > 1 ? g.items.filter((_, j) => j !== ii) : g.items } : g)));
+  const addIngSection = () => setIngSections((a) => [...a, { title: "", items: [{ name: "", qty: "", unit: "" }] }]);
+  const removeIngSection = (gi) => setIngSections((a) => (a.length > 1 ? a.filter((_, i) => i !== gi) : a));
 
   async function onFile(e) {
     const file = e.target.files?.[0];
@@ -86,12 +100,30 @@ export default function AdminPanel({ recipes: initial, cats }) {
     setF(EMPTY(cats[0]));
     setIng([{ name: "", qty: "", unit: "" }]);
     setSteps([""]); setSections([{ title: "", steps: [""] }]); setUseSections(false);
+    setIng([{ name: "", qty: "", unit: "" }]); setIngSections([{ title: "", items: [{ name: "", qty: "", unit: "" }] }]); setUseIngSections(false);
   }
 
   function startEdit(r) {
     setEditingId(r.id);
     setF({ name: r.name, cat: r.cat, image: r.image || "", time: r.time, diff: r.diff, kcal: r.kcal, serv: r.serv, blurb: r.blurb || "", grad: r.grad });
-    setIng(r.ing && r.ing.length ? r.ing.map((x) => ({ name: x[0], qty: x[1] ? String(x[1]) : "", unit: x[2] || "" })) : [{ name: "", qty: "", unit: "" }]);
+    const ingArr = r.ing || [];
+    const hasIngSec = ingArr.some((x) => (x[4] !== null && x[4] !== undefined) || x[3]);
+    if (hasIngSec) {
+      const keyOf = (x) => (x[4] !== null && x[4] !== undefined ? `g${x[4]}` : `t:${x[3] || ""}`);
+      const grp = [];
+      for (const x of ingArr) {
+        const key = keyOf(x);
+        const last = grp[grp.length - 1];
+        const item = { name: x[0], qty: x[1] ? String(x[1]) : "", unit: x[2] || "" };
+        if (last && last._k === key) last.items.push(item);
+        else grp.push({ _k: key, title: x[3] || "", items: [item] });
+      }
+      setIngSections(grp.map((g) => ({ title: g.title, items: g.items })));
+      setUseIngSections(true);
+    } else {
+      setIng(ingArr.length ? ingArr.map((x) => ({ name: x[0], qty: x[1] ? String(x[1]) : "", unit: x[2] || "" })) : [{ name: "", qty: "", unit: "" }]);
+      setUseIngSections(false);
+    }
     const st = r.steps || [];
     const hasSec = st.some((s) => (s.group !== null && s.group !== undefined) || s.section);
     if (hasSec) {
@@ -122,7 +154,10 @@ export default function AdminPanel({ recipes: initial, cats }) {
       ? sections.flatMap((g, gi) =>
           g.steps.map((c) => c.trim()).filter(Boolean).map((c) => ({ content: c, section: g.title.trim(), group: gi })))
       : steps.map((c) => c.trim()).filter(Boolean).map((c) => ({ content: c, section: "", group: null }));
-    const wireIng = ing.filter((i) => i.name.trim()).map((i) => [i.name.trim(), Number(i.qty) || 0, i.unit.trim()]);
+    const wireIng = useIngSections
+      ? ingSections.flatMap((g, gi) =>
+          g.items.filter((it) => it.name.trim()).map((it) => [it.name.trim(), Number(it.qty) || 0, it.unit.trim(), g.title.trim(), gi]))
+      : ing.filter((i) => i.name.trim()).map((i) => [i.name.trim(), Number(i.qty) || 0, i.unit.trim(), "", null]);
     const body = { ...f, ing: wireIng, steps: wireSteps };
 
     const res = await fetch(isEdit ? `/api/admin/recipes/${editingId}` : "/api/admin/recipes", {
@@ -186,18 +221,49 @@ export default function AdminPanel({ recipes: initial, cats }) {
           </div>
         )}
 
-        {/* ---- Ingrédients ---- */}
         <div style={{ marginTop: 18 }}>
           <span className="admin-field" style={{ fontWeight: 700, fontSize: 13, color: "var(--ink2)" }}>Ingrédients (qté / unité facultatives)</span>
-          {ing.map((it, idx) => (
-            <div className="admin-row" key={idx}>
-              <input className="auth-input" placeholder="Nom" value={it.name} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, name: e.target.value } : x))} />
-              <input className="auth-input" placeholder="Qté" style={{ maxWidth: 90 }} value={it.qty} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, qty: e.target.value } : x))} />
-              <input className="auth-input" placeholder="Unité" style={{ maxWidth: 110 }} value={it.unit} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, unit: e.target.value } : x))} />
-              <button className="x" onClick={() => setIng((a) => a.length > 1 ? a.filter((_, i) => i !== idx) : a)}><Close size={15} /></button>
-            </div>
-          ))}
-          <button className="mini-add" onClick={() => setIng((a) => [...a, { name: "", qty: "", unit: "" }])}>+ ajouter un ingrédient</button>
+          <label style={{ display: "flex", alignItems: "center", gap: 8, margin: "4px 0 12px", fontWeight: 700, fontSize: 13, color: "var(--ink2)", cursor: "pointer" }}>
+            <input type="checkbox" checked={useIngSections} onChange={(e) => toggleIngSections(e.target.checked)} />
+            Ingrédients par sections (ex. « Pour la pâte »)
+          </label>
+
+          {!useIngSections && (
+            <>
+              {ing.map((it, idx) => (
+                <div className="admin-row" key={idx}>
+                  <input className="auth-input" placeholder="Nom" value={it.name} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, name: e.target.value } : x))} />
+                  <input className="auth-input" placeholder="Qté" style={{ maxWidth: 90 }} value={it.qty} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, qty: e.target.value } : x))} />
+                  <input className="auth-input" placeholder="Unité" style={{ maxWidth: 110 }} value={it.unit} onChange={(e) => setIng((a) => a.map((x, i) => i === idx ? { ...x, unit: e.target.value } : x))} />
+                  <button className="x" onClick={() => setIng((a) => a.length > 1 ? a.filter((_, i) => i !== idx) : a)}><Close size={15} /></button>
+                </div>
+              ))}
+              <button className="mini-add" onClick={() => setIng((a) => [...a, { name: "", qty: "", unit: "" }])}>+ ajouter un ingrédient</button>
+            </>
+          )}
+
+          {useIngSections && (
+            <>
+              {ingSections.map((g, gi) => (
+                <div className="sec-block" key={gi}>
+                  <div className="admin-row">
+                    <input className="auth-input" style={{ fontWeight: 700 }} placeholder="Titre de la section (ex. Pour la pâte)" value={g.title} onChange={(e) => setIngSecTitle(gi, e.target.value)} />
+                    <button className="x" onClick={() => removeIngSection(gi)} title="Supprimer la section"><Close size={15} /></button>
+                  </div>
+                  {g.items.map((it, ii) => (
+                    <div className="admin-row" key={ii} style={{ marginLeft: 16 }}>
+                      <input className="auth-input" placeholder="Nom" value={it.name} onChange={(e) => setIngSecItem(gi, ii, "name", e.target.value)} />
+                      <input className="auth-input" placeholder="Qté" style={{ maxWidth: 90 }} value={it.qty} onChange={(e) => setIngSecItem(gi, ii, "qty", e.target.value)} />
+                      <input className="auth-input" placeholder="Unité" style={{ maxWidth: 110 }} value={it.unit} onChange={(e) => setIngSecItem(gi, ii, "unit", e.target.value)} />
+                      <button className="x" onClick={() => removeIngSecItem(gi, ii)}><Close size={15} /></button>
+                    </div>
+                  ))}
+                  <button className="mini-add" style={{ marginLeft: 16 }} onClick={() => addIngSecItem(gi)}>+ ingrédient</button>
+                </div>
+              ))}
+              <button className="mini-add" onClick={addIngSection}>+ ajouter une section</button>
+            </>
+          )}
         </div>
 
         {/* ---- Étapes ---- */}

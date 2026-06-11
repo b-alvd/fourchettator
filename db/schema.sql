@@ -16,12 +16,14 @@ CREATE TABLE IF NOT EXISTS recipes (
 CREATE INDEX IF NOT EXISTS idx_recipes_cat ON recipes(cat);
 
 CREATE TABLE IF NOT EXISTS ingredients (
-  id        INTEGER PRIMARY KEY AUTOINCREMENT,
-  recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
-  position  INTEGER NOT NULL,
-  name      TEXT NOT NULL,
-  qty       REAL NOT NULL,
-  unit      TEXT
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  recipe_id     INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+  position      INTEGER NOT NULL,
+  name          TEXT NOT NULL,
+  qty           REAL NOT NULL,
+  unit          TEXT,
+  section       TEXT,
+  section_group INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS steps (
